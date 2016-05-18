@@ -3,26 +3,18 @@
  
 	<head>
 		<meta charset="UTF-8">
-		<title>Artistes</title>
+		<title>Films</title>
 	</head>
  
 	<body>
-	
-	<table>
-	
-		<tr>
-		  <th>Titre</th>
-			<th>Genre</th>
-		</tr>
-	
-	<?php
-		
-		$link=mysqli_connect("dwarves.iut-fbleau.fr", "philippe", "quentinphpmyadmin", "philippe");
+	  <thead>
+    <?php
+    
+    $link=mysqli_connect("dwarves.iut-fbleau.fr", "philippe", "quentinphpmyadmin", "philippe");
 			if(!$link){
 				die("<p>connexion impossible</p>");
 			}
-
-    $requete=mysqli_query($link,"SELECT F.titre,F.annee,F.genre, A.nom FROM Film F, Artiste A WHERE F.idMes = A.idArtiste");
+    
     $genre=mysqli_query($link, "SELECT DISTINCT genre FROM Film");
     $pays=mysqli_query($link, "SELECT DISTINCT codePays FROM Film");
     $realisateur=mysqli_query($link, "SELECT DISTINCT A.nom FROM Artiste A JOIN Film F ON (F.idMes = A.idArtiste)");
@@ -69,16 +61,34 @@
           
     echo "</form>";
     
-    extract($_GET);
+    ?>
+   
+  </thead> 
+	<table>
+	
+		<tr>
+		  <th>Titre</th>
+			<th>Genre</th>
+		</tr>
+	  <tbody>
+	<?php
+		
+		$link=mysqli_connect("dwarves.iut-fbleau.fr", "philippe", "quentinphpmyadmin", "philippe");
+			if(!$link){
+				die("<p>connexion impossible</p>");
+			}
+    $requete=mysqli_query($link,"SELECT titre,genre FROM Film");
+   
+    if($requete){
+       extract($_GET);
     
     if(isset($titre) && ($genre) && ($annee)){
-      $query = "INSERT INTO Film(titre,genre,annee,resume) values (?,?,?)";
+      $query = "INSERT INTO Film(titre,genre,annee,resume) values (?,?,?,?)";
       $stmt = mysqli_prepare($link, $query);
       mysqli_stmt_bind_param($stmt, "sss",$titre, $genre, $annee, $resume);
       mysqli_stmt_execute($stmt);
-      echo "INSERT INTO Artiste(titre,genre,annee,resume) values ('".$titre."','".$genre."','".$resume."','"$annee"')";
-      
-      $requete=mysqli_query($link,"SELECT A.nom,A.prenom,A.anneeNaiss FROM Artiste A");
+     
+     $requete=mysqli_query($link,"SELECT titre,genre FROM Film");
     
     }
     
@@ -94,8 +104,8 @@
 	
 	?>
 	
-	
+	  
+  </tbody>
 	</table>
-	
 	</body>
 </html>
